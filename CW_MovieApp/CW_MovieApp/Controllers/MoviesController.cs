@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CW_MovieApp.Data;
 using CW_MovieApp.Modules;
+using CW_MovieApp.Repositories;
 
 namespace CW_MovieApp.Controllers
 {
@@ -15,31 +16,32 @@ namespace CW_MovieApp.Controllers
     public class MoviesController : ControllerBase
     {
         private readonly MoviesListDbContext _context;
+        private readonly IMoviesRepository _moviesRepository;
 
-        public MoviesController(MoviesListDbContext context)
+        public MoviesController(IMoviesRepository moviesRepository)
         {
-            _context = context;
+            _moviesRepository = moviesRepository;
         }
 
         // GET: api/Movies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Movie>>> GetMovies()
+        public async Task<IEnumerable<Movie>> GetMovies()
         {
-            return await _context.Movies.ToListAsync();
+            return await _moviesRepository.GetAllMovies();
         }
 
         // GET: api/Movies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Movie>> GetMovie(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
+            var movie = await _moviesRepository.GetSingleMovie(id);
 
             if (movie == null)
             {
                 return NotFound();
             }
 
-            return movie;
+            return Ok(movie);
         }
 
         // PUT: api/Movies/5
@@ -52,24 +54,7 @@ namespace CW_MovieApp.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(movie).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MovieExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _moviesRepository.UpdateMovie(movie);
             return NoContent();
         }
 
@@ -78,8 +63,7 @@ namespace CW_MovieApp.Controllers
         [HttpPost]
         public async Task<ActionResult<Movie>> PostMovie(Movie movie)
         {
-            _context.Movies.Add(movie);
-            await _context.SaveChangesAsync();
+           _moviesRepository.CreateMovie(movie);
 
             return CreatedAtAction("GetMovie", new { id = movie.Id }, movie);
         }
@@ -88,21 +72,8 @@ namespace CW_MovieApp.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
-            var movie = await _context.Movies.FindAsync(id);
-            if (movie == null)
-            {
-                return NotFound();
-            }
-
-            _context.Movies.Remove(movie);
-            await _context.SaveChangesAsync();
-
+           _moviesRepository.DeleteMovie(id);
             return NoContent();
-        }
-
-        private bool MovieExists(int id)
-        {
-            return _context.Movies.Any(e => e.Id == id);
         }
     }
 }

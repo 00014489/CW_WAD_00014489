@@ -1,6 +1,7 @@
 ﻿using CW_MovieApp.Data;
 using Microsoft.EntityFrameworkCore;
 using CW_MovieApp.Controllers;
+using CW_MovieApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MoviesListDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MoviesListConnectionStr")));
+builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
 
 var app = builder.Build();
 
