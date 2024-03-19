@@ -72,7 +72,7 @@ namespace CW_MovieApp.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteMovie(int id)
         {
-           _moviesRepository.DeleteMovie(id);
+            await _moviesRepository.DeleteMovie(id);
             return NoContent();
         }
     }
