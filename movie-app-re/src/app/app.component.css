@@ -29,3 +29,9 @@ section {
     justify-content: center;
     width: 120px;
   }
+  .example-spacer {
+    flex: 1 1 auto;
+  }
+  table {
+    width: 100%;
+  }
