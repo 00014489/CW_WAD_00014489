@@ -12,27 +12,34 @@ namespace CW_MovieApp.Repositories
         {
             _dbContext = dbContext;
         }
+
+        //Get all
         public async Task<IEnumerable<Movie>> GetAllMovies()
         {
-            var movies = await _dbContext.Movies.ToListAsync();
+            var movies = await _dbContext.Movies.Include(b => b.Actor).ToListAsync();
             return movies;
         }
 
+        //Get by ID
         public async Task<Movie> GetSingleMovie(int id)
         {
-            return await _dbContext.Movies.FirstOrDefaultAsync( b => b.Id == id);
+            return await _dbContext.Movies.Include(b => b.Actor).FirstOrDefaultAsync( b => b.Id == id);
         }
 
+        //Create
         public async Task CreateMovie(Movie movie)
         {
             await _dbContext.Movies.AddAsync(movie);
             await _dbContext.SaveChangesAsync();
         }
+
+        //Edit
         public async Task UpdateMovie(Movie movie)
         {
             _dbContext.Entry(movie).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
         }
+        //Delete
         public async Task DeleteMovie(int id)
         {
             var movie = await _dbContext.Movies.FirstOrDefaultAsync(b=>b.Id == id);

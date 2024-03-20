@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MoviesListDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("MoviesListConnectionStr")));
 builder.Services.AddScoped<IMoviesRepository, MoviesRepository>();
+builder.Services.AddScoped<IActorsRepository, ActorsRepository>();
 
 var app = builder.Build();
 

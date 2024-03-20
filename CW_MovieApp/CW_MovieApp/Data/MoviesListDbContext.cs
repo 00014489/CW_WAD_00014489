@@ -7,5 +7,7 @@ namespace CW_MovieApp.Data
     {
         public MoviesListDbContext(DbContextOptions<MoviesListDbContext> options) : base(options) { }
         public DbSet<Movie> Movies { get; set; }
+
+        public DbSet<Actor> Actors { get; set; }
     }
 }
